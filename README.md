@@ -1,4 +1,5 @@
 
+Github Page: https://b2e2.github.io/b2e2_docs/
 
 # B2E2: Technische Ausgestaltung
 
