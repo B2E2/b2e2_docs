@@ -1,0 +1,51 @@
+#title 1.6 Setup
+
+actor PhysicalAssetAuthority
+actor Producer
+actor Consumer
+
+participant GenerationPlant.sol
+participant ConsumptionPlant.sol
+
+
+
+entryspacing 0.8
+
+
+group Authentication and Authorization with Claims
+
+
+PhysicalAssetAuthority -> Producer:[<<ExistenceClaim>>, \n<<GenerationTypeClaim>>, \n<<LocationClaim>>]
+activate Producer
+Producer ->GenerationPlant.sol:add Claims (\n[<<ExistenceClaim>>, \n<<GenerationTypeClaim>>, \n<<LocationClaim>>\n<<MaxPowerGenerationClaim>>])
+activate GenerationPlant.sol
+deactivate Producer
+GenerationPlant.sol -> PhysicalAssetAuthority.sol:get Claim with _claimType="IsPhysicalAssetAuthority"
+
+
+
+activate PhysicalAssetAuthority.sol
+GenerationPlant.sol<<--PhysicalAssetAuthority.sol:<<IsPhysicalAssetAuthority>>
+deactivate PhysicalAssetAuthority.sol
+GenerationPlant.sol->GenerationPlant.sol:verify claims
+
+
+
+
+deactivate GenerationPlant.sol
+PhysicalAssetAuthority -> Consumer:<<ExistenceClaim>>
+activate Consumer
+Consumer ->ConsumptionPlant.sol:add Claim (<<ExistenceClaim>>)
+deactivate Consumer
+
+
+activate ConsumptionPlant.sol
+ConsumptionPlant.sol->PhysicalAssetAuthority.sol:get Claim with _claimType =\n"IsPhysicalAssetAuthority"
+activate PhysicalAssetAuthority.sol
+ConsumptionPlant.sol<<--PhysicalAssetAuthority.sol:<<IsPhysicalAssetAuthority>>
+deactivate PhysicalAssetAuthority.sol
+ConsumptionPlant.sol->ConsumptionPlant.sol:verify claims
+
+
+deactivate ConsumptionPlant.sol
+end 
